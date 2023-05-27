@@ -232,7 +232,7 @@ qtconsole==5.4.0
     # via jupyter
 qtpy==2.3.0
     # via qtconsole
-requests==2.28.1
+requests==2.31.0
     # via -r requirements.in
 scipy==1.9.3
     # via -r requirements.in

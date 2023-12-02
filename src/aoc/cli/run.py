@@ -10,6 +10,6 @@ def run(day, year):
     """Runs an AOC solution."""
     try:
         solution_module = import_module(f"aoc.{year}.{day:0>2}")
-        click.echo(getattr(solution_module, "main")())
+        getattr(solution_module, "main")()
     except ModuleNotFoundError:
         click.echo(f"No solution found for day {day}, {year}.")

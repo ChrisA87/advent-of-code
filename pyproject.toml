@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "aoc-solutions"
+authors = [
+    {name = "Chris Adams", email = "cfh1990@msn.com"},
+]
+description = "Advent of code solutions."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "requests",
+    "click"
+]
+version = '0.0.1'
+
+
+[project.scripts]
+aoc = "aoc.cli:main"
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["aoc*"]

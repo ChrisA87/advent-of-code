@@ -9,6 +9,10 @@ BASE_URL = "https://adventofcode.com/{}/day/{}/input"
 ROOT = Path(__file__).parent
 
 
+def get_year(file):
+    return Path(file).parent.name
+
+
 def get_input_data(day: int, year: int = datetime.today().year) -> str:
     url = BASE_URL.format(year, day)
     res = requests.get(url, headers={"cookie": SESSION_ID})

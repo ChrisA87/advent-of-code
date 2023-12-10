@@ -1,9 +1,8 @@
 from io import StringIO
 import aoc
-import asyncio
 from dataclasses import dataclass
 from itertools import cycle
-
+from math import lcm
 
 data = """LLR
 
@@ -11,18 +10,18 @@ AAA = (BBB, BBB)
 BBB = (AAA, ZZZ)
 ZZZ = (ZZZ, ZZZ)"""
 
-# data = """LR
+data = """LR
 
-# 11A = (11B, XXX)
-# 11B = (XXX, 11Z)
-# 11Z = (11B, XXX)
-# 22A = (22B, XXX)
-# 22B = (22C, 22C)
-# 22C = (22Z, 22Z)
-# 22Z = (22B, 22B)
-# XXX = (XXX, XXX)"""
+11A = (11B, XXX)
+11B = (XXX, 11Z)
+11Z = (11B, XXX)
+22A = (22B, XXX)
+22B = (22C, 22C)
+22C = (22Z, 22Z)
+22Z = (22B, 22B)
+XXX = (XXX, XXX)"""
 
-# data = aoc.get_data_from_file(8)
+data = aoc.get_data_from_file(8)
 
 
 STARTING_NODE = "AAA"
@@ -66,16 +65,41 @@ class Network:
             network.add_node(Node.from_text(line))
         return network
 
-    def steps_to_target(self, start: str = STARTING_NODE, target: str = TARGET_NODE):
+    def steps_to_target(self, start: str, target: str):
         self._reset()
         steps = 0
         node = start
 
         while node != target:
-            direction = LR_MAP[next(self)]
-            node = getattr(self._data[node], direction)
+            node = self._step(node)
             steps += 1
         return steps
+
+    def steps_to_target_endswith(self, start: str, endswith: str):
+        self._reset()
+        steps = 0
+        node = start
+
+        while not node.endswith(endswith):
+            node = self._step(node)
+            steps += 1
+        return steps
+
+    def get_nodes_ending_with(self, pat: str):
+        return {k: v for k, v in self._data.items() if k.endswith(pat)}
+
+    def steps_all_starting_to_target(self, start: str, target: str):
+        nodes = self.get_nodes_ending_with(start)
+        steps_to_first_target = []
+
+        for node in nodes:
+            self._reset()
+            steps_to_first_target.append(self.steps_to_target_endswith(node, target))
+        return lcm(*steps_to_first_target)
+
+    def _step(self, node: str):
+        direction = LR_MAP[next(self)]
+        return getattr(self._data[node], direction)
 
     def _reset(self):
         self._lr_iterator = cycle(self.lr_seq)
@@ -90,11 +114,18 @@ class Network:
 @aoc.part(1)
 def solution_1():
     network = Network.from_file(StringIO(data))
-    return network.steps_to_target()
+    return network.steps_to_target(start=STARTING_NODE, target=TARGET_NODE)
+
+
+@aoc.part(2)
+def solution_2():
+    network = Network.from_file(StringIO(data))
+    return network.steps_all_starting_to_target(start="A", target="Z")
 
 
 def main():
     print(solution_1())  # 17263
+    print(solution_2())  # 14631604759649
 
 
 if __name__ == "__main__":

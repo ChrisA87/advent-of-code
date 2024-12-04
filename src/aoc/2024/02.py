@@ -9,7 +9,7 @@ data = """7 6 4 2 1
 8 6 4 4 1
 1 3 6 7 9"""
 
-# data = aoc.get_data_from_file(2)
+data = aoc.get_data_from_file(2)
 
 
 def parse_data(data: str) -> List[List[int]]:
@@ -45,7 +45,18 @@ def part_1(reports: List[List[int]]) -> int:
 
 @aoc.part(2)
 def part_2(reports: List[List[int]]) -> int:
-    pass
+    result = 0
+
+    for report in reports:
+        if is_safe(report):
+            result += 1
+            continue
+
+        for i in range(len(report)):
+            if is_safe(report[:i] + report[i + 1 :]):
+                result += 1
+                break
+    return result
 
 
 def main():

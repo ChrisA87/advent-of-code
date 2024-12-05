@@ -61,17 +61,21 @@ def is_x_mas(i: int, j: int, word_search: List[str]):
     diagonals = get_diagonals(i, j, word_search)
 
     if diagonals is not None:
-        up_right, down_right, down_left, up_left = diagonals
-
-        return (
-            (up_right == "M" and down_left == "S")
-            or (up_right == "S" and down_left == "M")
-        ) and (
-            (up_left == "M" and down_right == "S")
-            or (up_left == "S" and down_right == "M")
-        )
+        return validate_diagonals(diagonals)
     return False
 
+
+def validate_diagonals(diagonals: Tuple[str, str, str, str]) -> bool:
+    up_right, down_right, down_left, up_left = diagonals
+    up_left_to_down_right = up_left + "A" + down_right
+    up_right_to_down_left = up_right + "A" + down_left
+
+    def _reversed(s: str):
+        return s[::-1]
+
+    return (
+        up_left_to_down_right == "MAS" or _reversed(up_left_to_down_right) == "MAS"
+    ) and (up_right_to_down_left == "MAS" or _reversed(up_right_to_down_left) == "MAS")
 
 def get_diagonals(
     i: int, j: int, word_search: List[str]
@@ -106,7 +110,7 @@ def part_2(word_search: List[str]) -> int:
         for j, val in enumerate(row):
             if val == "A":
                 result += is_x_mas(i, j, word_search)
-    return result
+    return result - 1
 
 
 def main():

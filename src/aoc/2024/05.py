@@ -63,7 +63,14 @@ def in_order(update, rules):
 
 
 def sort_unordered_update(update, rules):
-    # TODO
+    while not in_order(update, rules):
+        print(f"Not sorted: {update}")
+        for i, page in enumerate(update):
+            for j, next_page in enumerate(update[i + 1 :], i + 1):
+                print(f" Checking {i} ({page}), {j} ({next_page})")
+                if page in rules.get(next_page):
+                    update[j], update[i] = update[i], update[j]
+                    print(f"  Swapped: {update}")
     return update
 
 

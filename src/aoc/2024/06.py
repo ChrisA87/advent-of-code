@@ -1,6 +1,4 @@
-from collections import defaultdict
-import re
-from typing import Callable, List, Tuple
+from typing import List, Tuple
 
 from dataclasses import dataclass
 import aoc

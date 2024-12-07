@@ -47,31 +47,30 @@ def evaluate_equation(equation: List[int | str]):
     return result
 
 
-@aoc.part(1)
-def part_1() -> int:
+def solve(data: List[Tuple[int, List[int]]], operators: List[str]):
     result = 0
-    for target, numbers in parse_data(data):
-        for equation in generate_equations(numbers, ["+", "*"]):
+    for target, numbers in data:
+        for equation in generate_equations(numbers, operators):
             if evaluate_equation(equation) == target:
                 result += target
                 break
     return result
+
+
+@aoc.part(1)
+def part_1(data: List[Tuple[int, List[int]]]) -> int:
+    return solve(data, ["+", "*"])
 
 
 @aoc.part(2)
-def part_2() -> int:
-    result = 0
-    for target, numbers in parse_data(data):
-        for equation in generate_equations(numbers, ["+", "*", "||"]):
-            if evaluate_equation(equation) == target:
-                result += target
-                break
-    return result
+def part_2(data: List[Tuple[int, List[int]]]) -> int:
+    return solve(data, ["+", "*", "||"])
 
 
 def main():
-    print(part_1())
-    print(part_2())
+    parsed_data = parse_data(data)
+    print(part_1(parsed_data))
+    print(part_2(parsed_data))
 
 
 if __name__ == "__main__":

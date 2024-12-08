@@ -1,6 +1,6 @@
 from collections import defaultdict, namedtuple
 from itertools import combinations
-from typing import Dict, Generator, List, Tuple
+from typing import Dict, Generator, List, Set, Tuple
 import aoc
 
 data = """............
@@ -41,32 +41,36 @@ def is_valid(antinode: Position) -> bool:
 
 
 def get_antinode(position: Position, x_diff: int, y_diff: int) -> Position:
-    return Position(position.x - x_diff, position.y - y_diff)
+    return Position(position.x + x_diff, position.y + y_diff)
+
+
+def get_diffs(position1: Position, position2: Position) -> Tuple[int, int]:
+    return position2.x - position1.x, position2.y - position1.y
 
 
 def get_valid_antinodes(position1: Position, position2: Position) -> List[Position]:
-    x_diff = position2.x - position1.x
-    y_diff = position2.y - position1.y
-    antinode1 = get_antinode(position1, x_diff, y_diff)
-    antinode2 = get_antinode(position2, -x_diff, -y_diff)
+    x_diff, y_diff = get_diffs(position1, position2)
+    antinode1 = get_antinode(position1, -x_diff, -y_diff)
+    antinode2 = get_antinode(position2, x_diff, y_diff)
     return [antinode for antinode in [antinode1, antinode2] if is_valid(antinode)]
 
 
-def get_valid_antinodes_v2(position1: Position, position2: Position) -> List[Position]:
-    x_diff = position2.x - position1.x
-    y_diff = position2.y - position1.y
-    antinodes1 = [position1]
-    antinodes2 = [position2]
+def get_valid_antinodes_v2(position1: Position, position2: Position) -> Set[Position]:
+    x_diff, y_diff = get_diffs(position1, position2)
+    antinodes = {position1, position2}
 
-    while is_valid(antinode := get_antinode(position1, x_diff, y_diff)):
-        antinodes1.append(antinode)
-        position1 = antinode
-
-    while is_valid(antinode := get_antinode(position2, -x_diff, -y_diff)):
-        antinodes2.append(antinode)
-        position2 = antinode
-
-    return antinodes1 + antinodes2
+    while any(
+        (
+            is_valid(antinode1 := get_antinode(position1, -x_diff, -y_diff)),
+            is_valid(antinode2 := get_antinode(position2, x_diff, y_diff)),
+        )
+    ):
+        antinodes.update(
+            [antinode for antinode in (antinode1, antinode2) if is_valid(antinode)]
+        )
+        position1 = antinode1
+        position2 = antinode2
+    return antinodes
 
 
 @aoc.part(1)

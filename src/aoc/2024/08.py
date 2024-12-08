@@ -32,7 +32,7 @@ def parse_antena_positions(data: str) -> Dict[str, List[Position]]:
 
 def generate_antena_pairs(
     antena_positions: List[Position],
-) -> Generator[List[Position], None, None]:
+) -> Generator[Tuple[Position], None, None]:
     yield from combinations(antena_positions, 2)
 
 

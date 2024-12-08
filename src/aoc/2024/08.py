@@ -1,6 +1,6 @@
 from collections import defaultdict, namedtuple
 from itertools import combinations
-from typing import Dict, List, Tuple
+from typing import Dict, Generator, List, Tuple
 import aoc
 
 data = """............
@@ -21,7 +21,7 @@ data = aoc.get_data_from_file(8)
 Position = namedtuple("Position", ["x", "y"])
 
 
-def parse_antena_positions(data: str) -> Dict[str, List[Tuple[int, int]]]:
+def parse_antena_positions(data: str) -> Dict[str, List[Position]]:
     result = defaultdict(list)
     for i, line in enumerate(data):
         for j, val in enumerate(line):
@@ -30,19 +30,21 @@ def parse_antena_positions(data: str) -> Dict[str, List[Tuple[int, int]]]:
     return result
 
 
-def generate_antena_pairs(antena_positions: List[Tuple[int, int]]):
+def generate_antena_pairs(
+    antena_positions: List[Position],
+) -> Generator[List[Position], None, None]:
     yield from combinations(antena_positions, 2)
 
 
-def is_valid(antinode: Position):
+def is_valid(antinode: Position) -> bool:
     return (0 <= antinode.x < ROWS) and (0 <= antinode.y < COLS)
 
 
-def get_antinode(position: Position, x_diff: int, y_diff: int):
+def get_antinode(position: Position, x_diff: int, y_diff: int) -> Position:
     return Position(position.x - x_diff, position.y - y_diff)
 
 
-def get_valid_antinodes(position1: Position, position2: Position):
+def get_valid_antinodes(position1: Position, position2: Position) -> List[Position]:
     x_diff = position2.x - position1.x
     y_diff = position2.y - position1.y
     antinode1 = get_antinode(position1, x_diff, y_diff)
@@ -50,8 +52,7 @@ def get_valid_antinodes(position1: Position, position2: Position):
     return [antinode for antinode in [antinode1, antinode2] if is_valid(antinode)]
 
 
-def get_valid_antinodes_v2(position1: Position, position2: Position):
-
+def get_valid_antinodes_v2(position1: Position, position2: Position) -> List[Position]:
     x_diff = position2.x - position1.x
     y_diff = position2.y - position1.y
     antinodes1 = [position1]

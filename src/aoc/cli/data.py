@@ -1,6 +1,5 @@
 import click
 from datetime import datetime
-from pathlib import Path
 from aoc import get_input_data, ROOT
 
 

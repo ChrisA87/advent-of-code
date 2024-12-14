@@ -24,7 +24,7 @@ def to_sorted_ints(data: List[str]) -> List[int]:
 
 @aoc.part(1)
 def part_1(left: List[int], right: List[int]) -> int:
-    return sum(abs(l - r) for r, l in zip(left, right))
+    return sum(abs(r - l) for l, r in zip(left, right))
 
 
 @aoc.part(2)

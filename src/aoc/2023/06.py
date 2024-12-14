@@ -1,4 +1,3 @@
-from math import inf
 import aoc
 
 data = """Time:      7  15   30

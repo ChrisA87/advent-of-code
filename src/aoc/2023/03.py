@@ -1,5 +1,4 @@
 import aoc
-from typing import Tuple
 
 data = aoc.get_data_from_file(3).split("\n")
 N_ROWS = len(data)

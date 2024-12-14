@@ -23,7 +23,7 @@ data = aoc.get_data_from_file(13, 2024)
 
 A_COST: int = 3
 B_COST: int = 1
-CONV_ERROR: int = 10_000_000_000
+CONV_ERROR: int = 1e13
 
 
 def parse_data(data: str):

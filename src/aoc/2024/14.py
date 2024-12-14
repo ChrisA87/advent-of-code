@@ -123,8 +123,8 @@ def part_2() -> int:
             [robot.future_position(i) for robot in robots]
         )
         if np.all(grid_positions <= 1):
-            print(f"Result: {i}")
-            return render_positions(grid_positions)
+            result = f"{i}\n\n"
+            return result + render_positions(grid_positions)
 
 
 def main():

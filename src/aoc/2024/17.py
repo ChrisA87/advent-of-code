@@ -8,6 +8,13 @@ Register C: 0
 
 Program: 0,1,5,4,3,0"""
 
+data = """Register A: 2024
+Register B: 0
+Register C: 0
+
+Program: 0,3,5,4,3,0
+"""
+
 data = aoc.get_data_from_file(17, 2024)
 
 
@@ -21,17 +28,27 @@ class Registry:
     B: int
     C: int
 
+    @property
+    def values(self):
+        return (self.A, self.B, self.C)
+
 
 class Program:
 
     def __init__(self, registry: Registry, *ops):
         self.registry = registry
+        self._original_registry_vals = registry.values
         self.ops = ops
         self.pointer = 0
         self.output = []
 
     def __repr__(self):
         return f"Program(registry={self.registry}, ops={self.ops})"
+
+    def reset(self):
+        self.registry = Registry(*self._original_registry_vals)
+        self.pointer = 0
+        self.output = []
 
     def opcode(self, code: int) -> Callable:
         opcodes = {
@@ -117,12 +134,24 @@ def part_1() -> int:
 
 @aoc.part(2)
 def part_2() -> int:
-    pass
+    # TODO: brute force has failed me again
+    program = parse_data(data)
+    result = program.run()
+    target = ",".join(map(str, program.ops))
+    A = 0
+    while result != target:
+        A += 1
+        program.reset()
+        program.registry.A = A
+        result = program.run()
+        if A % 1000 == 0:
+            print(A)
+    return A
 
 
 def main():
     print(part_1())
-    print(part_2())
+    # print(part_2())
 
 
 if __name__ == "__main__":

@@ -1,3 +1,4 @@
+from functools import cache
 import aoc
 
 data = """..@@.@@@@.
@@ -14,7 +15,7 @@ data = """..@@.@@@@.
 data = aoc.get_data_from_file(4)
 
 ROLL_PAPER = "@"
-GRID = data.splitlines()
+GRID = list(map(list, data.splitlines()))
 DIMS = (len(GRID), len(GRID[0]))
 DIRECTIONS = {
     "up": lambda i, j: (i - 1, j),
@@ -33,7 +34,7 @@ def in_bounds(i: int, j: int) -> bool:
     return (0 <= i < rows) and (0 <= j < cols)
 
 
-def is_accessible(i: int, j: int, threshold: int = 3) -> bool:
+def is_accessible(i: int, j: int, threshold: int = 3, grid: list[str] = GRID) -> bool:
     if not in_bounds(i, j) or GRID[i][j] != ROLL_PAPER:
         return False
     adjacent = []
@@ -44,20 +45,52 @@ def is_accessible(i: int, j: int, threshold: int = 3) -> bool:
     return len(adjacent) <= threshold
 
 
-@aoc.part(1)
-def part_1() -> int:
+def get_accessible(grid: list[list[str]]) -> list[tuple[int, int]]:
     rows, cols = DIMS
-    result = 0
+    results = []
     for i in range(rows):
         for j in range(cols):
-            if is_accessible(i, j):
-                result += 1
+            if is_accessible(i, j, grid=grid):
+                results.append((i, j))
+    return results
+
+
+def count_accessible(grid: list[str]) -> int:
+    return len(get_accessible(grid))
+
+
+def remove_accessible(grid: list[str]) -> int:
+    result = grid[:]
+    for i, j in get_accessible(grid):
+        result[i][j] = "."
     return result
+
+
+def count_accessible_with_removals(grid: list[str]) -> int:
+    result = 0
+    n_accessible = 1
+
+    while n_accessible:
+        n_accessible = count_accessible(grid)
+        result += n_accessible
+        grid = remove_accessible(grid)
+        # render_grid(grid)
+        # print()
+    return result
+
+
+def render_grid(grid):
+    print("\n".join("".join(x) for x in grid))
+
+
+@aoc.part(1)
+def part_1() -> int:
+    return count_accessible(GRID)
 
 
 @aoc.part(2)
 def part_2() -> int:
-    pass
+    return count_accessible_with_removals(GRID)
 
 
 def main():

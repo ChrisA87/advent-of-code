@@ -18,7 +18,7 @@ data = aoc.get_data_from_file(5)
 def parse_data(data: str) -> list[tuple[int, int], list[int]]:
     ranges, ingredients = data.split("\n\n")
     ranges = [tuple(map(int, rng.split("-"))) for rng in ranges.splitlines()]
-    ranges = sorted(ranges, key=lambda x: x[0])
+    ranges = merge_intervals(sorted(ranges, key=lambda x: x[0]))
     ingredients = list(map(int, ingredients.splitlines()))
     return ranges, ingredients
 
@@ -30,6 +30,21 @@ def is_fresh(ingredient_id: int, fresh_ids: dict) -> bool:
         if l_bound <= ingredient_id <= u_bound:
             return True
     return False
+
+
+def merge_intervals(intervals: list[tuple[int, int]]):
+    merged = [intervals[0]]
+
+    for current in intervals[1:]:
+        last_start, last_end = merged[-1]
+        curr_start, curr_end = current
+
+        if curr_start <= last_end:
+            merged[-1] = (last_start, max(last_end, curr_end))
+        else:
+            merged.append(current)
+
+    return merged
 
 
 @aoc.part(1)
@@ -44,7 +59,11 @@ def part_1() -> int:
 
 @aoc.part(2)
 def part_2() -> int:
-    pass
+    fresh_ids, _ = parse_data((data))
+    result = 0
+    for lower, upper in fresh_ids:
+        result += upper - lower + 1
+    return result
 
 
 def main():

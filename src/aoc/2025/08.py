@@ -62,6 +62,18 @@ def build_groups(coords: list[Point3D], n_connections):
     return groups
 
 
+def connect_all(coords: list[Point3D]):
+    distances = calculate_distances(coords)
+    distances.sort(key=lambda x: x[2])
+    uf = UnionFind(len(coords))
+    for c1, c2, _ in distances:
+        idx1 = coords.index(c1)
+        idx2 = coords.index(c2)
+        uf.union(idx1, idx2)
+        if len(set(uf.find(i) for i in range(len(coords)))) == 1:
+            return c1.x * c2.x
+
+
 @aoc.part(1)
 def part_1() -> int:
     junctions = parse_coords_3d(data)
@@ -71,7 +83,8 @@ def part_1() -> int:
 
 @aoc.part(2)
 def part_2() -> int:
-    pass
+    junctions = parse_coords_3d(data)
+    return connect_all(junctions)
 
 
 def main():

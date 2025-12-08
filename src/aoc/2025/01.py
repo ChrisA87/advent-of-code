@@ -11,7 +11,7 @@ L99
 R14
 L82"""
 
-# data = aoc.get_data_from_file(1)
+data = aoc.get_data_from_file(1)
 
 STARTING_POINT = 50
 
@@ -41,12 +41,15 @@ def part_2() -> int:
     password = 0
     for line in data.split("\n"):
         rotation = parse_line(line.strip())
-        div, mod = divmod(rotation, 100)
-        position = (position + mod) % 100
-        print(line)
-        print(f"div: {div}, rotation: {rotation}, position: {position}")
-        print()
-        password += abs(div)
+
+        for _ in range(abs(rotation)):
+            if rotation < 0:
+                position -= 1
+            else:
+                position += 1
+            position %= 100
+            if position == 0:
+                password += 1
     return password
 
 

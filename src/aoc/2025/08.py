@@ -1,5 +1,7 @@
+from math import prod
 import aoc
 from aoc.utils import parse_coords_3d, euclidean_distance, Point3D
+from aoc.algorithms.union_find import UnionFind
 
 
 data = """162,817,812
@@ -23,7 +25,7 @@ data = """162,817,812
 984,92,344
 425,690,689"""
 
-# data = aoc.get_data_from_file(8)
+data = aoc.get_data_from_file(8)
 
 
 def calculate_distances(coords: list[Point3D]) -> list[tuple[Point3D, Point3D, float]]:
@@ -44,13 +46,27 @@ def n_shortest_distances(
     return distances[:n]
 
 
+def build_groups(coords: list[Point3D], n_connections):
+    shortest_distances = n_shortest_distances(coords, n_connections)
+    uf = UnionFind(len(coords))
+    for c1, c2, _ in shortest_distances:
+        idx1 = coords.index(c1)
+        idx2 = coords.index(c2)
+        uf.union(idx1, idx2)
+    groups = {}
+    for i, coord in enumerate(coords):
+        root = uf.find(i)
+        if root not in groups:
+            groups[root] = []
+        groups[root].append(coord)
+    return groups
+
+
 @aoc.part(1)
 def part_1() -> int:
     junctions = parse_coords_3d(data)
-    shortest_connections = n_shortest_distances(junctions, 10)
-    for con in shortest_connections:
-        print(con)
-    # return shortest_connections
+    groups = build_groups(junctions, 1000)
+    return prod(sorted(len(members) for members in groups.values())[-3:])
 
 
 @aoc.part(2)

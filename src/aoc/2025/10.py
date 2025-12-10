@@ -19,6 +19,16 @@ class Machine:
         self.button_wirings = button_wirings
         self.joltage = joltage
 
+    @property
+    def button_matrix(self) -> list[list[int]]:
+        result = []
+        for wiring in self.button_wirings:
+            row = [0] * len(self.indicator_lights)
+            for idx in wiring:
+                row[idx] = 1
+            result.append(row)
+        return result
+
     @classmethod
     def from_string(cls, string: str) -> "Machine":
         il, *bw, j = string.split()
@@ -40,6 +50,8 @@ def part_1() -> int:
     for line in data.splitlines():
         machine = Machine.from_string(line)
         print(machine)
+        print(machine.button_matrix)
+        print()
 
 
 @aoc.part(2)

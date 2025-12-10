@@ -1,3 +1,5 @@
+from collections import deque
+
 import aoc
 
 
@@ -5,7 +7,7 @@ data = """[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
 [...#.] (0,2,3,4) (2,3) (0,4) (0,1,2) (1,2,3,4) {7,5,12,7,2}
 [.###.#] (0,1,2,3,4) (0,3,4) (0,1,2,4,5) (1,2) {10,11,11,5,10,5}"""
 
-# data = aoc.get_data_from_file(10)
+data = aoc.get_data_from_file(10)
 
 
 class Machine:
@@ -37,6 +39,32 @@ class Machine:
         j = list(map(int, j.strip("{}").split(",")))
         return cls(il, bw, j)
 
+    def fewest_button_presses(self) -> int:
+        state = [0] * len(self.indicator_lights)
+        queue = deque([(state, 0)])
+        visited = {tuple(state)}
+
+        while queue:
+            state, steps = queue.popleft()
+
+            if state == self.indicator_lights:
+                return steps
+
+            for button in self.button_wirings:
+                next_state = self._toggle(state, button)
+
+                if (t := tuple(next_state)) not in visited:
+                    visited.add(t)
+                    queue.append((next_state, steps + 1))
+
+        return -1
+
+    def _toggle(self, state: list[int], button_wiring: list[int]) -> list[int]:
+        new_state = state[:]
+        for idx in button_wiring:
+            new_state[idx] = 1 - new_state[idx]
+        return new_state
+
     def __repr__(self) -> str:
         return (
             f"Machine(indicator_lights={self.indicator_lights}, "
@@ -47,11 +75,11 @@ class Machine:
 
 @aoc.part(1)
 def part_1() -> int:
+    result = 0
     for line in data.splitlines():
         machine = Machine.from_string(line)
-        print(machine)
-        print(machine.button_matrix)
-        print()
+        result += machine.fewest_button_presses()
+    return result
 
 
 @aoc.part(2)

@@ -15,7 +15,9 @@ dependencies = [
     "requests",
     "click",
     "regex",
-    "sympy"
+    "sympy",
+    "networkx",
+    "ipython"
 ]
 version = '0.0.1'
 
